@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies 
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
@@ -20,12 +20,12 @@ COPY . .
 RUN useradd --create-home --shell /bin/bash app && chown -R app:app /app
 USER app
 
-# Expose port (Railway provides PORT env variable)
-EXPOSE $PORT
+# Expose a fixed port (Railway will map it to $PORT)
+EXPOSE 8000
 
-# Health check
+# Health check using fixed port
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:$PORT/health || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Start command - use Railway's PORT env variable
+# Use shell form to allow environment variable expansion
 CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}

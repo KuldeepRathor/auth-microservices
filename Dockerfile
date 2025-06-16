@@ -19,8 +19,8 @@ COPY . .
 RUN useradd --create-home --shell /bin/bash app && chown -R app:app /app
 USER app
 
-# Default port (Railway will override with $PORT)
+# Expose port
 EXPOSE 8000
 
-# This will be overridden by railway.json startCommand
-CMD ["echo", "Railway will override this command"]
+# Procfile will override this
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

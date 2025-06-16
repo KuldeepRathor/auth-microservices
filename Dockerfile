@@ -6,7 +6,6 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install dependencies
@@ -20,12 +19,8 @@ COPY . .
 RUN useradd --create-home --shell /bin/bash app && chown -R app:app /app
 USER app
 
-# Expose a fixed port (Railway will map it to $PORT)
+# Default port (Railway will override with $PORT)
 EXPOSE 8000
 
-# Health check using fixed port
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-# Use shell form to allow environment variable expansion
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# This will be overridden by railway.json startCommand
+CMD ["echo", "Railway will override this command"]
